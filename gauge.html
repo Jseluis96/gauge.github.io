@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    .gauge {
+      width: 100%;
+      height: auto;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@svgdotjs/svg.js@3.1/dist/svg.min.js"></script>
+  <script>
+    var draw;
+    var meter;
+
+    function initGauge() {
+      draw = SVG().addTo('body').size(300, 150);
+      var arc = draw.path('M10 100 A90 90 0 0 1 190 100').fill('none').stroke({ width: 10, color: '#ddd' });
+      meter = draw.path('M10 100 A90 90 0 0 1 10 100').fill('none').stroke({ width: 10, color: '#0066cc' });
+    }
+
+    function updateGauge(voltage) {
+      var angle = (voltage / 5) * 180;
+      meter.plot(describeArc(100, 100, 80, -90, angle - 90));
+    }
+
+    function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
+      var angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
+      return {
+        x: centerX + (radius * Math.cos(angleInRadians)),
+        y: centerY + (radius * Math.sin(angleInRadians))
+      };
+    }
+
+    function describeArc(x, y, radius, startAngle, endAngle) {
+      var start = polarToCartesian(x, y, radius, endAngle);
+      var end = polarToCartesian(x, y, radius, startAngle);
+      var largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
+      var d = ['M', start.x, start.y, 'A', radius, radius, 0, largeArcFlag, 0, end.x, end.y].join(' ');
+      return d;
+    }
+
+    window.onload = initGauge;
+  </script>
+</head>
+<body>
+</body>
+</html>
